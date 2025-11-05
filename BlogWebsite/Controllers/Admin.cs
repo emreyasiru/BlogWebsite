@@ -56,5 +56,15 @@ namespace BlogWebsite.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("LoginPage");
         }
+        public IActionResult Kategoriler()
+        {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            if (userId == null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+            return View();
+        }
+
     }
 }

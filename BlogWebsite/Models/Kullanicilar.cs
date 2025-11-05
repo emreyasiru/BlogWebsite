@@ -18,4 +18,6 @@ public partial class Kullanicilar
     public string? ProfilResmi { get; set; }
 
     public string Rol { get; set; } = null!;
+
+    public virtual ICollection<BlogYazilari> BlogYazilaris { get; set; } = new List<BlogYazilari>();
 }

@@ -15,6 +15,12 @@ public partial class BlogDbContext : DbContext
     {
     }
 
+    public virtual DbSet<BlogYazilari> BlogYazilaris { get; set; }
+
+    public virtual DbSet<Etiketler> Etiketlers { get; set; }
+
+    public virtual DbSet<Kategoriler> Kategorilers { get; set; }
+
     public virtual DbSet<Kullanicilar> Kullanicilars { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -23,6 +29,50 @@ public partial class BlogDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BlogYazilari>(entity =>
+        {
+            entity.HasKey(e => e.BlogId).HasName("PK__BlogYazi__54379E30E5F60BDD");
+
+            entity.ToTable("BlogYazilari");
+
+            entity.Property(e => e.AnaGorsel).HasMaxLength(255);
+            entity.Property(e => e.Baslik).HasMaxLength(200);
+            entity.Property(e => e.Ozet).HasMaxLength(500);
+            entity.Property(e => e.YayinTarihi).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Kategori).WithMany(p => p.BlogYazilaris)
+                .HasForeignKey(d => d.KategoriId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BlogYazilari_Kategori");
+
+            entity.HasOne(d => d.Yazar).WithMany(p => p.BlogYazilaris)
+                .HasForeignKey(d => d.YazarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BlogYazilari_Yazar");
+        });
+
+        modelBuilder.Entity<Etiketler>(entity =>
+        {
+            entity.HasKey(e => e.EtiketId).HasName("PK__Etiketle__3214EC076F700978");
+
+            entity.ToTable("Etiketler");
+
+            entity.HasIndex(e => e.EtiketAdi, "UQ__Etiketle__3A42154ECC20896E").IsUnique();
+
+            entity.Property(e => e.EtiketAdi).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<Kategoriler>(entity =>
+        {
+            entity.HasKey(e => e.KategoriId).HasName("PK__Kategori__3214EC07A2CD7FEA");
+
+            entity.ToTable("Kategoriler");
+
+            entity.HasIndex(e => e.KategoriAdi, "UQ__Kategori__110FF79E1A2F41AE").IsUnique();
+
+            entity.Property(e => e.KategoriAdi).HasMaxLength(100);
+        });
+
         modelBuilder.Entity<Kullanicilar>(entity =>
         {
             entity.HasKey(e => e.KullaniciId).HasName("PK__Kullanic__E011F77B59C8A4F8");
