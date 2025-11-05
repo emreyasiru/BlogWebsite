@@ -29,14 +29,14 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
-app.UseAuthorization();
 app.UseSession();
+app.UseAuthorization();
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Admin}/{action=LoginPage}/{id?}")
     .WithStaticAssets();
 
 

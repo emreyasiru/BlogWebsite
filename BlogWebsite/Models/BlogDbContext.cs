@@ -34,19 +34,13 @@ public partial class BlogDbContext : DbContext
             entity.HasIndex(e => e.Email, "UQ__Kullanic__A9D105347D069A94").IsUnique();
 
             entity.Property(e => e.AdSoyad).HasMaxLength(100);
-            entity.Property(e => e.Aktif).HasDefaultValue(true);
             entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.Hakkinda).HasMaxLength(500);
-            entity.Property(e => e.KayitTarihi)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
             entity.Property(e => e.KullaniciAdi).HasMaxLength(50);
             entity.Property(e => e.ProfilResmi).HasMaxLength(255);
             entity.Property(e => e.Rol)
                 .HasMaxLength(20)
                 .HasDefaultValue("Yazar");
             entity.Property(e => e.Sifre).HasMaxLength(255);
-            entity.Property(e => e.SonGirisTarihi).HasColumnType("datetime");
         });
 
         OnModelCreatingPartial(modelBuilder);

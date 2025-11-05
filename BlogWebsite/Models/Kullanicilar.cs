@@ -17,13 +17,5 @@ public partial class Kullanicilar
 
     public string? ProfilResmi { get; set; }
 
-    public string? Hakkinda { get; set; }
-
     public string Rol { get; set; } = null!;
-
-    public bool Aktif { get; set; }
-
-    public DateTime KayitTarihi { get; set; }
-
-    public DateTime? SonGirisTarihi { get; set; }
 }
