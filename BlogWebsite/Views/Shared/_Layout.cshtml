@@ -29,6 +29,7 @@
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.css" rel="stylesheet" />
 
    <style>
+       
     #weatherWidget .currentDesc {
         color: #ffffff!important;
     }
@@ -61,6 +62,145 @@
         }
         #cellPaiChart{
             height: 160px;
+        }
+
+        /* Karanlık Mod Toggle Butonu */
+        .theme-toggle {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .theme-toggle i {
+            font-size: 18px;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        /* Karanlık Mod Stilleri */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .left-panel {
+            background: #2d2d2d;
+        }
+
+        body.dark-mode .navbar-default {
+            background: #2d2d2d;
+            border-color: #3d3d3d;
+        }
+
+        body.dark-mode .main-menu .nav > li > a {
+            color: #b0b0b0;
+        }
+
+        body.dark-mode .main-menu .nav > li > a:hover,
+        body.dark-mode .main-menu .nav > li.active > a {
+            color: #fff;
+            background: #3d3d3d;
+        }
+
+        body.dark-mode .menu-title {
+            color: #888;
+        }
+
+        body.dark-mode .right-panel {
+            background: #1a1a1a;
+        }
+
+        body.dark-mode .header {
+            background: #2d2d2d;
+            border-bottom: 1px solid #3d3d3d;
+        }
+
+        body.dark-mode .navbar-header {
+            background: #2d2d2d;
+        }
+
+        body.dark-mode .theme-toggle:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        body.dark-mode .theme-toggle i {
+            color: #ffa500;
+        }
+
+        body.dark-mode .dropdown-menu {
+            background: #2d2d2d;
+            border-color: #3d3d3d;
+        }
+
+        body.dark-mode .dropdown-item {
+            color: #b0b0b0;
+        }
+
+        body.dark-mode .dropdown-item:hover {
+            background: #3d3d3d;
+            color: #fff;
+        }
+
+        body.dark-mode .card {
+            background: #2d2d2d;
+            border-color: #3d3d3d;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .form-control {
+            background: #3d3d3d;
+            border-color: #4d4d4d;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .form-control:focus {
+            background: #3d3d3d;
+            border-color: #5d5d5d;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .table {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+            background: rgba(255,255,255,0.03);
+        }
+
+        body.dark-mode .btn-secondary {
+            background: #3d3d3d;
+            border-color: #4d4d4d;
+        }
+
+        body.dark-mode .sub-menu {
+            background: #242424;
+        }
+
+        body.dark-mode .user-menu {
+            background: #2d2d2d;
+        }
+
+        body.dark-mode .search-form .form-control {
+            background: #3d3d3d;
+            color: #e0e0e0;
+        }
+
+        /* Geçiş animasyonu */
+        body, .left-panel, .right-panel, .header, .navbar-default, .card, .dropdown-menu {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
     </style>
@@ -246,17 +386,23 @@
 
                             <a class="nav-link" href="#"><i class="fa fa -cog"></i>Settings</a>
 
-                            <a class="nav-link" href="#"><i class="fa fa-power -off"></i>Logout</a>
+                            <a asp-controller="Admin" asp-action="Logout" class="nav-link" ><i class="fa fa-power -off"></i>Logout</a>
                         </div>
                     </div>
+
+                    <!-- Karanlık Mod Toggle Butonu -->
+                    <button class="theme-toggle mt-2 ml-2" id="themeToggle" title="Tema Değiştir">
+                        <i class="fa fa-moon-o" id="themeIcon"></i>
+                    </button>
 
                 </div>
             </div>
         </header>
         <!-- /#header -->
-    
-            @RenderBody()
-   
+
+        <!-- Buraya içerik gelecek -->
+        @RenderBody()
+
    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
@@ -281,6 +427,52 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
     <script src="~/AdminPanel/assets/js/init/fullcalendar-init.js"></script>
+
+    <!-- Karanlık Mod JavaScript -->
+    <script>
+        // Tema yönetimi için değişkenler
+        var themeKey = 'adminTheme';
+        var currentTheme = 'light';
+
+        // Sayfa yüklendiğinde kaydedilmiş temayı kontrol et
+        function initTheme() {
+            var savedTheme = localStorage.getItem(themeKey);
+            if (savedTheme === 'dark') {
+                enableDarkMode();
+            }
+        }
+
+        // Karanlık modu etkinleştir
+        function enableDarkMode() {
+            document.body.classList.add('dark-mode');
+            document.getElementById('themeIcon').className = 'fa fa-sun-o';
+            localStorage.setItem(themeKey, 'dark');
+            currentTheme = 'dark';
+        }
+
+        // Aydınlık modu etkinleştir
+        function disableDarkMode() {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('themeIcon').className = 'fa fa-moon-o';
+            localStorage.setItem(themeKey, 'light');
+            currentTheme = 'light';
+        }
+
+        // Tema değiştirme fonksiyonu
+        function toggleTheme() {
+            if (currentTheme === 'light') {
+                enableDarkMode();
+            } else {
+                disableDarkMode();
+            }
+        }
+
+        // Sayfa yüklendiğinde temayı başlat
+        initTheme();
+
+        // Buton tıklama olayı
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    </script>
 
     <!--Local Stuff-->
     <script>
