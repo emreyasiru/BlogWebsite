@@ -80,6 +80,31 @@ namespace BlogWebsite.Controllers
             _db.SaveChanges();
             return RedirectToAction("Kategoriler");
         }
+        [HttpGet]
+        public IActionResult Etiketler()
+        {
+            var etiketler = _db.Etiketlers.ToList();
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            if (userId == null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+
+            return View(etiketler);
+        }
+        [HttpPost]
+        public IActionResult EtiketEkle(string Etiket_ekle)
+        {
+            var etkekle = new Etiketler
+            {
+                EtiketAdi = Etiket_ekle,
+
+            };
+
+            _db.Etiketlers.Add(etkekle);
+            _db.SaveChanges();
+            return RedirectToAction("Etiketler");
+        }
 
 
     }
