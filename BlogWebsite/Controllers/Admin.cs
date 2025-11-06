@@ -56,14 +56,17 @@ namespace BlogWebsite.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("LoginPage");
         }
+        [HttpGet]
         public IActionResult Kategoriler()
         {
+            var kategoriler = _db.Kategorilers.ToList();
             var userId = HttpContext.Session.GetInt32("KullaniciId");
             if (userId == null)
             {
                 return RedirectToAction("LoginPage");
             }
-            return View();
+
+            return View(kategoriler);
         }
         [HttpPost]
         public IActionResult KategoriEkle(string kategori_ekle)
@@ -75,8 +78,9 @@ namespace BlogWebsite.Controllers
 
             _db.Kategorilers.Add(ktgekle);
             _db.SaveChanges();
-            return View("Kategoriler");
+            return RedirectToAction("Kategoriler");
         }
+
 
     }
 }

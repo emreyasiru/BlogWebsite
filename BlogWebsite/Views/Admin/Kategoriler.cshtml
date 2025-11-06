@@ -2,9 +2,11 @@
     ViewData["Title"] = "Kategoriler";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@model List<Kategoriler>
+
 
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary ml-5 mt-5 mb-5" data-toggle="modal" data-target="#exampleModal">
+<button type="button" class="btn btn-primary ml-4 mt-5 mb-2" data-toggle="modal" data-target="#exampleModal">
     Kategori Ekle
 </button>
 
@@ -34,3 +36,33 @@
         </div>
     </div>
 </div>
+<div class="card">
+    <div class="card-header">
+        <strong class="card-title">Table Head</strong>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>                                 
+                    <th scope="col">Id</th>
+                    <th scope="col">Kategori Adı</th>
+                    <th scope="col">#</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ktg in Model)
+                { 
+                         <tr>
+                            <th scope="row">@ktg.KategoriId</th>
+                            <td>@ktg.KategoriAdi</td>
+                            <td>Otto</td>
+
+                        </tr>
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+ </div>
+          
