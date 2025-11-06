@@ -65,6 +65,18 @@ namespace BlogWebsite.Controllers
             }
             return View();
         }
+        [HttpPost]
+        public IActionResult KategoriEkle(string kategori_ekle)
+        {
+            var ktgekle = new Kategoriler
+            {
+                KategoriAdi = kategori_ekle
+            };
+
+            _db.Kategorilers.Add(ktgekle);
+            _db.SaveChanges();
+            return View("Kategoriler");
+        }
 
     }
 }
