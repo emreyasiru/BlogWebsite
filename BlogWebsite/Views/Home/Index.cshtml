@@ -6,23 +6,9 @@
 <style>
     .bosluk{
 		margin-top: 75px;
-    }
-   .single-recent-blog-post .thumb {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    overflow: hidden;
-    background: #f5f5f5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.single-recent-blog-post .thumb img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: scale-down; /* Büyük resimleri küçült, küçük resimleri olduğu gibi bırak */
-}
+    }
+   
     
 </style>
 
@@ -102,32 +88,30 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8">
-            @foreach(var item in Model.BlogYazilarim){
-
-            
-            <div class="single-recent-blog-post">
-              <div class="thumb">
-                  
-                <img class="img-fluid "  src="@item.AnaGorsel" alt="">
-            
-                
-               
-                <ul class="thumb-info">
-                  <li><a href="#"><i class="ti-user"></i>Admin</a></li>
-                  <li><a href="#"><i class="ti-notepad"></i>January 12,2019</a></li>
-                  <li><a href="#"><i class="ti-themify-favicon"></i>2 Comments</a></li>
-                </ul>
-              </div>
-              <div class="details mt-20">
-                <a href="blog-single.html">
-                  <h3>Woman claims husband wants to name baby girl
-                    after his ex-lover sparking.</h3>
-                </a>
-                <p class="tag-list-inline">Tag: <a href="#">travel</a>, <a href="#">life style</a>, <a href="#">technology</a>, <a href="#">fashion</a></p>
-                <p>Over yielding doesn't so moved green saw meat hath fish he him from given yielding lesser cattle were fruitful lights. Given let have, lesser their made him above gathered dominion sixth. Creeping deep said can't called second. Air created seed heaven sixth created living</p>
-                <a class="button" href="#">Read More <i class="ti-arrow-right"></i></a>
-              </div>
-            </div>
+            @foreach(var item in Model.BlogYazilarim){ 
+                @foreach(var yazar in Model.Kullanicilarim){
+					if (item.YazarId == yazar.KullaniciId&& yazar.Rol=="Yazar"){
+                         <div class="single-recent-blog-post">
+                           <div class="thumb" >                  
+                            <img width="720px" height="400px"   src="@item.AnaGorsel" alt="">              
+                            <ul class="thumb-info">
+                              <li><i class="ti-user"></i>@yazar.AdSoyad</li>
+                              <li><i class="ti-notepad"></i>January 12,2019</li>
+                              <li><a href="#"><i class="ti-themify-favicon"></i>2 Comments</a></li>
+                            </ul>
+                          </div>
+                          <div class="details mt-20">
+                            <a href="blog-single.html">
+                              <h3>Woman claims husband wants to name baby girl
+                                after his ex-lover sparking.</h3>
+                            </a>
+                            <p class="tag-list-inline">Tag: <a href="#">travel</a>, <a href="#">life style</a>, <a href="#">technology</a>, <a href="#">fashion</a></p>
+                            <p>Over yielding doesn't so moved green saw meat hath fish he him from given yielding lesser cattle were fruitful lights. Given let have, lesser their made him above gathered dominion sixth. Creeping deep said can't called second. Air created seed heaven sixth created living</p>
+                            <a class="button" href="#">Read More <i class="ti-arrow-right"></i></a>
+                          </div>
+                        </div>
+                             }							              
+                        }
                     }
 
 
