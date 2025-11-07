@@ -23,6 +23,8 @@ public partial class BlogDbContext : DbContext
 
     public virtual DbSet<Kullanicilar> Kullanicilars { get; set; }
 
+    public virtual DbSet<Yorumlar> Yorumlars { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=DESKTOP-9TAOJGA\\SQLEXPRESS;Database=BlogDb;User Id=sa;Password=123;TrustServerCertificate=True;");
@@ -91,6 +93,29 @@ public partial class BlogDbContext : DbContext
                 .HasMaxLength(20)
                 .HasDefaultValue("Yazar");
             entity.Property(e => e.Sifre).HasMaxLength(255);
+        });
+
+        modelBuilder.Entity<Yorumlar>(entity =>
+        {
+            entity.HasKey(e => e.YorumId).HasName("PK__Yorumlar__F2BE14E86331DC9E");
+
+            entity.ToTable("Yorumlar");
+
+            entity.Property(e => e.Ad).HasMaxLength(100);
+            entity.Property(e => e.Email).HasMaxLength(100);
+            entity.Property(e => e.IpAdresi).HasMaxLength(50);
+            entity.Property(e => e.OlusturmaTarihi)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.YorumIcerik).HasMaxLength(1000);
+
+            entity.HasOne(d => d.Blog).WithMany(p => p.Yorumlars)
+                .HasForeignKey(d => d.BlogId)
+                .HasConstraintName("FK_Yorumlar_Blog");
+
+            entity.HasOne(d => d.UstYorum).WithMany(p => p.InverseUstYorum)
+                .HasForeignKey(d => d.UstYorumId)
+                .HasConstraintName("FK_Yorumlar_Ust");
         });
 
         OnModelCreatingPartial(modelBuilder);

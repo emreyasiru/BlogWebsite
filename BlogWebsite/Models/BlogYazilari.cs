@@ -28,4 +28,6 @@ public partial class BlogYazilari
     public virtual Kategoriler Kategori { get; set; } = null!;
 
     public virtual Kullanicilar Yazar { get; set; } = null!;
+
+    public virtual ICollection<Yorumlar> Yorumlars { get; set; } = new List<Yorumlar>();
 }
