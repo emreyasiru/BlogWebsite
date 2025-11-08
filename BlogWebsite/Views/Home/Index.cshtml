@@ -88,7 +88,7 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8">
-            @foreach(var item in Model.BlogYazilarim){
+            @foreach(var item in Model.BlogYazilarim){				
                         var yazar = Model.Kullanicilarim.FirstOrDefault(k => k.KullaniciId == item.YazarId);
 							var	yorumsayisi = Model.Yorumlarim.Count(x => x.BlogId == item.BlogId);
                             if (item.YazarId == yazar.KullaniciId && yazar.Rol == "Yazar" && item.Durum==1)
@@ -106,7 +106,26 @@
                             <a href="blog-single.html">
                               <h3>@item.Baslik</h3>
                             </a>
-                            <p class="tag-list-inline">Etiketler: <a href="#">travel</a>, <a href="#">life style</a>, <a href="#">technology</a>, <a href="#">fashion</a></p>
+                            <p class="tag-list-inline">
+                                    Etiketler:
+                                @{
+                                    var blogetiketlerim = Model.BlogEtiketlerim.Where(b => b.BlogId == item.BlogId).ToList();
+                                    var etiketAdlari = blogetiketlerim
+                                        .Select(be => Model.Etiketlerim.FirstOrDefault(e => e.EtiketId == be.EtiketId)?.EtiketAdi)
+                                        .Where(a => !string.IsNullOrEmpty(a))
+                                        .ToList();
+                                }
+
+                                @for (int i = 0; i < etiketAdlari.Count; i++)
+                                {
+                                    <a href="#">@etiketAdlari[i]</a>
+                                    if (i < etiketAdlari.Count - 1)
+                                    {
+                                        @:,
+                                    }
+                                }
+                                    </p>
+
                             <p>@item.Ozet</p>
                             <a class="button" href="#">Read More <i class="ti-arrow-right"></i></a>
                           </div>

@@ -25,6 +25,7 @@ namespace BlogWebsite.Controllers
                 blogs.Kategorilerim = _db.Kategorilers.ToList();
                 blogs.Yorumlarim = _db.Yorumlars.ToList();
                 blogs.Kullanicilarim = _db.Kullanicilars.ToList();
+                blogs.BlogEtiketlerim = _db.BlogEtiketlers.ToList();
 
 
             }

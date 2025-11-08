@@ -9,6 +9,8 @@ namespace BlogWebsite.Modeller
         public List<Kategoriler> Kategorilerim { get; set; }
         public List<Yorumlar> Yorumlarim { get; set; }
         public List<Kullanicilar> Kullanicilarim { get; set; }
+        public List<BlogEtiketler> BlogEtiketlerim { get; set; }
+
 
     }
 }
