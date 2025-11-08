@@ -22,10 +22,12 @@ public partial class BlogYazilari
 
     public DateTime? YayinTarihi { get; set; }
 
+    public virtual ICollection<BlogEtiketler> BlogEtiketlers { get; set; } = new List<BlogEtiketler>();
+
     public virtual Kategoriler Kategori { get; set; } = null!;
 
     public virtual Kullanicilar Yazar { get; set; } = null!;
 
     public virtual ICollection<Yorumlar> Yorumlars { get; set; } = new List<Yorumlar>();
-    public virtual ICollection<BlogEtiketleri> BlogEtiketleris { get; set; } = new List<BlogEtiketleri>();
+
 }

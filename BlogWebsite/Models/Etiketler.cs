@@ -7,5 +7,7 @@ public partial class Etiketler
     public string EtiketAdi { get; set; } = null!;
 
     public int KullanimSayisi { get; set; }
-    public virtual ICollection<BlogEtiketleri> BlogEtiketleris { get; set; } = new List<BlogEtiketleri>();
+
+    public virtual ICollection<BlogEtiketler> BlogEtiketlers { get; set; } = new List<BlogEtiketler>();
+
 }

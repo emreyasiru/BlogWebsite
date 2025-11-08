@@ -15,6 +15,8 @@ public partial class BlogDbContext : DbContext
     {
     }
 
+    public virtual DbSet<BlogEtiketler> BlogEtiketlers { get; set; }
+
     public virtual DbSet<BlogYazilari> BlogYazilaris { get; set; }
 
     public virtual DbSet<Etiketler> Etiketlers { get; set; }
@@ -31,6 +33,23 @@ public partial class BlogDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BlogEtiketler>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__BlogEtik__3214EC074D29B0DF");
+
+            entity.ToTable("BlogEtiketler");
+
+            entity.HasOne(d => d.Blog).WithMany(p => p.BlogEtiketlers)
+                .HasForeignKey(d => d.BlogId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__BlogEtike__BlogI__534D60F1");
+
+            entity.HasOne(d => d.Etiket).WithMany(p => p.BlogEtiketlers)
+                .HasForeignKey(d => d.EtiketId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__BlogEtike__Etike__5441852A");
+        });
+
         modelBuilder.Entity<BlogYazilari>(entity =>
         {
             entity.HasKey(e => e.BlogId).HasName("PK__BlogYazi__54379E30E5F60BDD");
