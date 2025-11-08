@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BlogWebsite.Models;
+﻿namespace BlogWebsite.Models;
 
 public partial class Etiketler
 {
@@ -10,4 +7,5 @@ public partial class Etiketler
     public string EtiketAdi { get; set; } = null!;
 
     public int KullanimSayisi { get; set; }
+    public virtual ICollection<BlogEtiketleri> BlogEtiketleris { get; set; } = new List<BlogEtiketleri>();
 }

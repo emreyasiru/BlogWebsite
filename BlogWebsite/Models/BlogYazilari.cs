@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BlogWebsite.Models;
+﻿namespace BlogWebsite.Models;
 
 public partial class BlogYazilari
 {
@@ -30,4 +27,5 @@ public partial class BlogYazilari
     public virtual Kullanicilar Yazar { get; set; } = null!;
 
     public virtual ICollection<Yorumlar> Yorumlars { get; set; } = new List<Yorumlar>();
+    public virtual ICollection<BlogEtiketleri> BlogEtiketleris { get; set; } = new List<BlogEtiketleri>();
 }
