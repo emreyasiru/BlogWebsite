@@ -129,7 +129,7 @@ namespace BlogWebsite.Controllers
         // Blog kaydetme
         [HttpPost]
         public async Task<IActionResult> BlogEkle(
-            int? userId,
+
             string Baslik,
             string Ozet,
             string Icerik,
@@ -139,6 +139,12 @@ namespace BlogWebsite.Controllers
         {
             try
             {
+                var userId = HttpContext.Session.GetInt32("KullaniciId");
+
+                if (userId == null)
+                {
+                    return RedirectToAction("LoginPage");
+                }
                 // Validasyon
                 if (string.IsNullOrWhiteSpace(Baslik))
                 {
@@ -158,7 +164,7 @@ namespace BlogWebsite.Controllers
                     Ozet = Ozet,
                     Icerik = Icerik,
                     KategoriId = KategoriId,
-                    YazarId = userId ?? 0, // null gelirse 0 ver                    Durum = 0, // Onay bekliyor
+                    YazarId = userId.Value, // Session'dan alınan değer
                     GoruntulemeSayisi = 0,
 
                 };
