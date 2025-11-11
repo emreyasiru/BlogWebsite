@@ -105,6 +105,17 @@ namespace BlogWebsite.Controllers
             _db.SaveChanges();
             return RedirectToAction("Etiketler");
         }
+        [HttpGet]
+        public IActionResult BlogEkle()
+        {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            if (userId == null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+
+            return View();
+        }
 
 
     }
