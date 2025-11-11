@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\AnaTemplate\" />
+    <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
 </Project>

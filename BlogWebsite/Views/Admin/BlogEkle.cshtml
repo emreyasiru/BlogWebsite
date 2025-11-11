@@ -1,7 +1,203 @@
-﻿
+﻿@model BlogWebsite.Modeller.KategoriVeEtiket
 @{
-    ViewData["Title"] = "BlogEkle";
+    ViewData["Title"] = "Yeni Blog Yazısı Ekle";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!-- Content Header -->
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Yeni Blog Yazısı</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a asp-action="Index">Bloglarım</a></li>
+                    <li class="breadcrumb-item active">Blog Ekle</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        
+        @if (TempData["Hata"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <i class="icon fas fa-ban"></i> @TempData["Hata"]
+            </div>
+        }
+
+        <form asp-action="BlogEkle" method="post" enctype="multipart/form-data">
+            <div class="row">
+                
+                <!-- Sol Kolon -->
+                <div class="col-md-8">
+                    
+                    <!-- Blog Bilgileri -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Blog Bilgileri</h3>
+                        </div>
+                        <div class="card-body">
+                            
+                            <!-- Başlık -->
+                            <div class="form-group">
+                                <label>Başlık <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="Baslik" 
+                                       placeholder="Blog başlığını girin..."
+                                       required>
+                            </div>
+
+                            <!-- Kısa Özet -->
+                            <div class="form-group">
+                                <label>Kısa Özet</label>
+                                <textarea class="form-control" 
+                                          name="Ozet" 
+                                          rows="3" 
+                                          placeholder="Blog için kısa bir özet yazın (liste görünümünde gösterilir)"></textarea>
+                                <small class="form-text text-muted">Bu alan opsiyoneldir</small>
+                            </div>
+
+                            <!-- İçerik -->
+                            <div class="form-group">
+                                <label>Blog İçeriği <span class="text-danger">*</span></label>
+                                <textarea class="form-control" 
+                                          name="Icerik" 
+                                          rows="15" 
+                                          placeholder="Blog içeriğinizi buraya yazın..."
+                                          required></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sağ Kolon -->
+                <div class="col-md-4">
+                    
+                    <!-- Paylaş Butonu -->
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <h3 class="card-title">Yayınla</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                <i class="icon fas fa-info-circle"></i>
+                                <strong>Bilgi:</strong> Blog yazınız admin tarafından onaylandıktan sonra sitede yayınlanacaktır.
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block btn-lg">
+                                <i class="fas fa-paper-plane"></i> Paylaş
+                            </button>
+                            <a asp-action="Index" class="btn btn-default btn-block">
+                                <i class="fas fa-times"></i> İptal
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Ana Görsel -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Ana Görsel</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <input type="file" 
+                                       class="form-control-file" 
+                                       name="AnaGorselDosya" 
+                                       accept="image/*"
+                                       onchange="previewImage(event)">
+                                <small class="form-text text-muted">
+                                    JPG, PNG veya GIF formatında (Max 5MB)
+                                </small>
+                            </div>
+                            
+                            <!-- Resim Önizleme -->
+                            <div class="text-center mt-3">
+                                <img id="resimOnizleme" 
+                                     src="" 
+                                     alt="Önizleme" 
+                                     class="img-fluid rounded"
+                                     style="max-height: 200px; display: none; border: 2px solid #ddd; padding: 5px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kategori Seçimi -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Kategori <span class="text-danger">*</span></h3>
+                        </div>
+                        <div class="card-body">
+                            <select class="form-control select2" name="KategoriId" required>
+                                <option value="">Kategori Seçin</option>
+                                @foreach (var kategori in Model.kategorilerim)
+                                {
+                                    <option value="@kategori.KategoriId">
+                                        @kategori.KategoriAdi
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Etiket Seçimi -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Etiketler</h3>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            <small class="text-muted d-block mb-2">Birden fazla etiket seçebilirsiniz</small>
+                            
+                            @foreach (var etiket in Model.etiketlerim)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           name="SecilenEtiketler" 
+                                           value="@etiket.EtiketId" 
+                                           id="etiket_@etiket.EtiketId">
+                                    <label class="form-check-label" for="etiket_@etiket.EtiketId">
+                                        @etiket.EtiketAdi
+                                        <small class="text-muted">(@etiket.KullanimSayisi)</small>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+
+    </div>
+</section>
+
+@section Scripts {
+<script>
+// Resim önizleme fonksiyonu
+function previewImage(event) {
+    const dosya = event.target.files[0];
+    if (dosya) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const onizleme = document.getElementById('resimOnizleme');
+            onizleme.src = e.target.result;
+            onizleme.style.display = 'block';
+        }
+        reader.readAsDataURL(dosya);
+    }
+}
+</script>
 }
 
 

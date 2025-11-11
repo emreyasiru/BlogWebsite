@@ -1,15 +1,19 @@
-﻿using BlogWebsite.Models;
+﻿using BlogWebsite.Modeller;
+using BlogWebsite.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogWebsite.Controllers
 {
     public class Admin : Controller
     {
-        private readonly BlogDbContext _db;
 
-        public Admin(BlogDbContext db)
+        private readonly BlogDbContext _db;
+        private readonly IWebHostEnvironment _env;
+
+        public Admin(BlogDbContext db, IWebHostEnvironment env)
         {
             _db = db;
+            _env = env;
         }
         [HttpGet]
         public IActionResult LoginPage()
@@ -114,7 +118,108 @@ namespace BlogWebsite.Controllers
                 return RedirectToAction("LoginPage");
             }
 
-            return View();
+            var model = new KategoriVeEtiket
+            {
+                kategorilerim = _db.Kategorilers.ToList(),
+                etiketlerim = _db.Etiketlers.OrderBy(e => e.EtiketAdi).ToList()
+            };
+
+            return View(model);
+        }
+        // Blog kaydetme
+        [HttpPost]
+        public async Task<IActionResult> BlogEkle(
+            int? userId,
+            string Baslik,
+            string Ozet,
+            string Icerik,
+            int KategoriId,
+            IFormFile AnaGorselDosya,
+            List<int> SecilenEtiketler)
+        {
+            try
+            {
+                // Validasyon
+                if (string.IsNullOrWhiteSpace(Baslik))
+                {
+                    TempData["Hata"] = "Başlık zorunludur!";
+                    return RedirectToAction("BlogEkle");
+                }
+
+                if (string.IsNullOrWhiteSpace(Icerik))
+                {
+                    TempData["Hata"] = "İçerik zorunludur!";
+                    return RedirectToAction("BlogEkle");
+                }
+
+                var blog = new BlogYazilari
+                {
+                    Baslik = Baslik,
+                    Ozet = Ozet,
+                    Icerik = Icerik,
+                    KategoriId = KategoriId,
+                    YazarId = userId ?? 0, // null gelirse 0 ver                    Durum = 0, // Onay bekliyor
+                    GoruntulemeSayisi = 0,
+
+                };
+
+                // Resim yükleme
+                if (AnaGorselDosya != null && AnaGorselDosya.Length > 0)
+                {
+                    string uploadKlasoru = Path.Combine(_env.WebRootPath, "uploads", "blog");
+
+                    if (!Directory.Exists(uploadKlasoru))
+                    {
+                        Directory.CreateDirectory(uploadKlasoru);
+                    }
+
+                    string dosyaUzantisi = Path.GetExtension(AnaGorselDosya.FileName);
+                    string yeniDosyaAdi = $"{Guid.NewGuid()}{dosyaUzantisi}";
+                    string dosyaYolu = Path.Combine(uploadKlasoru, yeniDosyaAdi);
+
+                    using (var stream = new FileStream(dosyaYolu, FileMode.Create))
+                    {
+                        await AnaGorselDosya.CopyToAsync(stream);
+                    }
+
+                    blog.AnaGorsel = $"/uploads/blog/{yeniDosyaAdi}";
+                }
+
+                // Blog'u kaydet
+                _db.BlogYazilaris.Add(blog);
+                await _db.SaveChangesAsync();
+
+                // Etiketleri kaydet
+                if (SecilenEtiketler != null && SecilenEtiketler.Any())
+                {
+                    foreach (var etiketId in SecilenEtiketler)
+                    {
+                        _db.BlogEtiketlers.Add(new BlogEtiketler
+                        {
+                            BlogId = blog.BlogId,
+                            EtiketId = etiketId,
+
+                        });
+
+                        // Etiket kullanım sayısını artır
+                        var etiket = await _db.Etiketlers.FindAsync(etiketId);
+                        if (etiket != null)
+                        {
+                            etiket.KullanimSayisi++;
+                        }
+                    }
+
+                    await _db.SaveChangesAsync();
+                }
+
+                TempData["Basarili"] = "Blog yazınız başarıyla kaydedildi ve admin onayı bekliyor.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Hata"] = $"Bir hata oluştu: {ex.Message}";
+                return RedirectToAction("BlogEkle");
+            }
         }
 
 
