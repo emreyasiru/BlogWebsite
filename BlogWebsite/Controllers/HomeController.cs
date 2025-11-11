@@ -38,10 +38,34 @@ namespace BlogWebsite.Controllers
         }
 
         [HttpGet]
-        public IActionResult BlogDetay()
+        public IActionResult BlogDetay(int? blogid)
         {
+            if (blogid == null || blogid == 0)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var bloglarým = _db.BlogYazilaris.FirstOrDefault(x => x.BlogId == blogid);
+            var yorumlarým = _db.Yorumlars.Where(x => x.BlogId == blogid).ToList();
+            var kategori = _db.Kategorilers.Where(x => x.KategoriId == bloglarým.KategoriId).FirstOrDefault();
+            var etiketler = (from be in _db.BlogEtiketlers
+                             join e in _db.Etiketlers on be.EtiketId equals e.EtiketId
+                             where be.BlogId == blogid
+                             select e).ToList();
+            var kullanici = _db.Kullanicilars.Where(x => x.KullaniciId == bloglarým.YazarId).FirstOrDefault();
+
+            var model = new AnasayfaBlogs();
+            {
+                model.BlogYazilarim = new List<BlogYazilari> { bloglarým };
+                model.Yorumlarim = yorumlarým;
+                model.Kategorilerim = new List<Kategoriler> { kategori };
+                model.Etiketlerim = etiketler;
+                model.Kullanicilarim = new List<Kullanicilar> { kullanici };
+            }
             return View();
         }
+
+
+
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
