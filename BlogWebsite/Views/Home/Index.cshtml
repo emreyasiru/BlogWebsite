@@ -90,16 +90,16 @@
           <div class="col-lg-8">
             @foreach(var item in Model.BlogYazilarim){				
                         var yazar = Model.Kullanicilarim.FirstOrDefault(k => k.KullaniciId == item.YazarId);
-							var	yorumsayisi = Model.Yorumlarim.Count(x => x.BlogId == item.BlogId);
+						var	yorumsayisi = Model.Yorumlarim.Count(x => x.BlogId == item.BlogId);
                             if (item.YazarId == yazar.KullaniciId && yazar.Rol == "Yazar" && item.Durum==1)
                             {
                          <div class="single-recent-blog-post">
                            <div class="thumb" >                  
                             <img width="720px" height="400px"   src="@item.AnaGorsel" alt="">              
                             <ul class="thumb-info">
-                              <li><i class="ti-user"></i>@yazar.AdSoyad</li>
-                              <li><i class="ti-notepad"></i>@item.YayinTarihi</li>
-                              <li><a href="#"><i class="ti-themify-favicon"></i>@yorumsayisi Yorum </a></li>
+                               <li><i class="ti-user"></i>@yazar.AdSoyad</li>
+                               <li><i class="ti-notepad"></i>@item.YayinTarihi?.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))</li>
+                               <li><a href="#"><i class="ti-themify-favicon"></i>@yorumsayisi Yorum </a></li>
                             </ul>
                           </div>
                           <div class="details mt-20">
