@@ -61,7 +61,7 @@ namespace BlogWebsite.Controllers
                 model.Etiketlerim = etiketler;
                 model.Kullanicilarim = new List<Kullanicilar> { kullanici };
             }
-            return View();
+            return View(model);
         }
 
 
