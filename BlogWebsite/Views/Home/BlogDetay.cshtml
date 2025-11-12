@@ -59,26 +59,35 @@
               </div>
 
 
-                <div class="comments-area">
+                <div class="comments-area">                     
                      <h4>@yorumsayisi Yorum</h4>
+                @foreach (var yorum in Model.Yorumlarim)
+                {
                     <div class="comment-list">
                         <div class="single-comment justify-content-between d-flex">
                             <div class="user justify-content-between d-flex">
-                                <div class="thumb">
-                                    <img src="img/blog/c1.jpg" alt="">
+                                
+                                <div class="thumb">               
+                                 <img width="60" height="60" src="~/AnaTemplate/img/blog/xdxd.png" alt="">
                                 </div>
                                 <div class="desc">
-                                    <h5><a href="#">Emilly Blunt</a></h5>
-                                    <p class="date">December 4, 2017 at 3:12 pm </p>
+                                   
+                                    <h5><a href="#">@yorum.Ad</a></h5>
+                                    <p class="date">@yorum.OlusturmaTarihi.ToString("dd MMM, yyyy hh:mm tt") </p>
                                     <p class="comment">
-                                        Never say goodbye till the end comes!
+                                       @yorum.YorumIcerik
                                     </p>
+                                       
                                 </div>
+                                        
                             </div>                           
                         </div>
-                    </div>	                                                               				
+
+                    </div>	}
+                        
                 </div>
                 }
+                
                 <div class="comment-form">
                     <h4>Leave a Reply</h4>
                     <form>
