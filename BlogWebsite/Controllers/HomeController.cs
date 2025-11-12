@@ -52,7 +52,7 @@ namespace BlogWebsite.Controllers
                              where be.BlogId == blogid
                              select e).ToList();
             var kullanici = _db.Kullanicilars.Where(x => x.KullaniciId == bloglarým.YazarId).FirstOrDefault();
-
+            ViewBag.YorumSayisi = yorumlarým.Count(x => x.Onaylandi == true);
             var model = new AnasayfaBlogs();
             {
                 model.BlogYazilarim = new List<BlogYazilari> { bloglarým };

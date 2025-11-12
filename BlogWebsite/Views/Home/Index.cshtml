@@ -90,7 +90,7 @@
           <div class="col-lg-8">
             @foreach(var item in Model.BlogYazilarim){				
                         var yazar = Model.Kullanicilarim.FirstOrDefault(k => k.KullaniciId == item.YazarId);
-						var	yorumsayisi = Model.Yorumlarim.Count(x => x.BlogId == item.BlogId);
+						var	yorumsayisi = Model.Yorumlarim.Count(x => x.BlogId == item.BlogId && x.Onaylandi==true);
                             if (item.YazarId == yazar.KullaniciId && yazar.Rol == "Yazar" && item.Durum==1)
                             {
                          <div class="single-recent-blog-post">

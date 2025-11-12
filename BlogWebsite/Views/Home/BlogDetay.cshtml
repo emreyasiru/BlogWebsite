@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col-lg-8">
          @foreach (var item in Model.BlogYazilarim){
-             var yorumsayisi = Model.Yorumlarim.Count(x => x.BlogId == item.BlogId);
+            
             <div class="main_blog_details">		
                 <img class="img-fluid" src="@item.AnaGorsel" alt="">
                 <a href="#"><h4>@item.Baslik </h4></a>
@@ -47,7 +47,7 @@
                 </div>
                 <p>@item.Icerik</p>              
                <div class="news_d_footer flex-column flex-sm-row">
-                 <a href="#"><span class="align-middle mr-2"><i class="ti-heart"></i></span>@yorumsayisi Yorum</a>
+                <a href="#"><span class="align-middle mr-2"><i class="ti-heart"></i></span>@ViewBag.YorumSayisi Yorum</a>
               
                  <div class="news_socail ml-sm-auto mt-sm-0 mt-2">
                <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -60,9 +60,10 @@
 
 
                 <div class="comments-area">                     
-                     <h4>@yorumsayisi Yorum</h4>
+                         <h4>@ViewBag.YorumSayisi Yorum</h4>
                 @foreach (var yorum in Model.Yorumlarim)
                 {
+                    if(yorum.Onaylandi==true){
                     <div class="comment-list">
                         <div class="single-comment justify-content-between d-flex">
                             <div class="user justify-content-between d-flex">
@@ -83,7 +84,9 @@
                             </div>                           
                         </div>
 
-                    </div>	}
+                                </div>
+                            }
+                        }
                         
                 </div>
                 }
