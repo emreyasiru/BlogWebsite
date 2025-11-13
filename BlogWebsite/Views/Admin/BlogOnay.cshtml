@@ -1,0 +1,170 @@
+﻿@model List<BlogWebsite.Models.BlogYazilari>
+@{
+    ViewData["Title"] = "BlogOnay";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Onay Bekleyen Bloglar (@Model.Count)</h3>
+                </div>
+                <div class="card-body">
+                    @if (Model.Count == 0)
+                    {
+                            <div class="alert alert-info">
+                                Onay bekleyen blog bulunmamaktadır.
+                            </div>
+                    }
+                    else
+                    {
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 80px;">Görsel</th>
+                                            <th>Başlık</th>
+                                            <th>Özet</th>
+                                            <th>Yazar</th>
+                                            <th>Kategori</th>
+                                            <th>Tarih</th>
+                                            <th style="width: 200px;">İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var blog in Model)
+                                    {
+                                                <tr id="blog-@blog.BlogId">
+                                                    <td>
+                                                @if (!string.IsNullOrEmpty(blog.AnaGorsel))
+                                                {
+                                                                <img src="@blog.AnaGorsel" alt="@blog.Baslik" 
+                                                                     class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                                                }
+                                                else
+                                                {
+                                                                <div class="bg-secondary text-white d-flex align-items-center justify-content-center" 
+                                                                     style="width: 60px; height: 60px;">
+                                                                    <i class="fas fa-image"></i>
+                                                                </div>
+                                                }
+                                                    </td>
+                                                    <td>
+                                                        <strong>@blog.Baslik</strong>
+                                                    </td>
+                                                    <td>
+                                                @if (!string.IsNullOrEmpty(blog.Ozet))
+                                                {
+                                                    @(blog.Ozet.Length > 100 ? blog.Ozet.Substring(0, 100) + "..." : blog.Ozet)
+                                                }
+                                                    </td>
+                                                    <td>@blog.Yazar.AdSoyad</td>
+                                                    <td>
+                                                        <span class="badge badge-info">@blog.Kategori.KategoriAdi</span>
+                                                    </td>
+                                                    <td>
+                                                @if (blog.YayinTarihi.HasValue)
+                                                {
+                                                    @blog.YayinTarihi.Value.ToString("dd.MM.yyyy HH:mm")
+                                                }
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-success btn-sm btn-onayla" data-blogid="@blog.BlogId">
+                                                            <i class="fas fa-check"></i> Onayla
+                                                        </button>
+                                                        <button class="btn btn-danger btn-sm btn-reddet" data-blogid="@blog.BlogId">
+                                                            <i class="fas fa-times"></i> Reddet
+                                                        </button>
+                                                       
+                                                    </td>
+                                                </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fonksiyonları hemen tanımla (jQuery yüklenmeden önce bile)
+    function onaylaBlog(blogId) {
+        if (confirm('Bu blogu onaylamak istediğinize emin misiniz?')) {
+            fetch('/Admin/BlogOnayla', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'blogId=' + blogId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('blog-' + blogId).remove();
+                    if (document.querySelectorAll('tbody tr').length === 0) {
+                        location.reload();
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu!');
+            });
+        }
+    }
+
+    function reddetBlog(blogId) {
+        if (confirm('Bu blogu reddetmek istediğinize emin misiniz? Blog silinecektir!')) {
+            fetch('/Admin/BlogReddet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'blogId=' + blogId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('blog-' + blogId).remove();
+                    if (document.querySelectorAll('tbody tr').length === 0) {
+                        location.reload();
+                    }
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                alert('Bir hata oluştu!');
+            });
+        }
+    }
+
+    // jQuery event delegation kullan
+    document.addEventListener('DOMContentLoaded', function() {
+        // Onayla butonları için
+        document.querySelectorAll('.btn-onayla').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var blogId = this.getAttribute('data-blogid');
+                onaylaBlog(blogId);
+            });
+        });
+
+        // Reddet butonları için
+        document.querySelectorAll('.btn-reddet').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var blogId = this.getAttribute('data-blogid');
+                reddetBlog(blogId);
+            });
+        });
+    });
+</script>

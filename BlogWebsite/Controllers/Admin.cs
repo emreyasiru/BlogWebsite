@@ -1,6 +1,7 @@
 ﻿using BlogWebsite.Modeller;
 using BlogWebsite.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogWebsite.Controllers
 {
@@ -227,7 +228,98 @@ namespace BlogWebsite.Controllers
                 return RedirectToAction("BlogEkle");
             }
         }
+        // Blog onay listesini göster
+        [HttpGet]
+        public IActionResult BlogOnay()
+        {
+            // Session'dan kullanıcı ID'sini al
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
 
+            if (kullaniciId == null)
+            {
+                return RedirectToAction("LoginPage", "Admin");
+            }
+
+            // Kullanıcının admin olup olmadığını kontrol et
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return RedirectToAction("LoginPage", "Admin");
+            }
+
+            // Durum = 0 olan (onay bekleyen) blogları getir
+            var onayBekleyenBloglar = _db.BlogYazilaris
+                .Include(b => b.Yazar)
+                .Include(b => b.Kategori)
+                .Where(b => b.Durum == 0)
+                .OrderByDescending(b => b.YayinTarihi)
+                .ToList();
+
+            return View(onayBekleyenBloglar);
+        }
+        // Blog onaylama işlemi
+        [HttpPost]
+        public IActionResult BlogOnayla(int blogId)
+        {
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+
+            if (kullaniciId == null)
+            {
+                return Json(new { success = false, message = "Oturum bulunamadı!" });
+            }
+
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var blog = _db.BlogYazilaris.FirstOrDefault(b => b.BlogId == blogId);
+
+            if (blog == null)
+            {
+                return Json(new { success = false, message = "Blog bulunamadı!" });
+            }
+
+            blog.Durum = 1;
+            blog.YayinTarihi = DateTime.Now;
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Blog onaylandı!" });
+        }
+
+        [HttpPost]
+        public IActionResult BlogReddet(int blogId)
+        {
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+
+            if (kullaniciId == null)
+            {
+                return Json(new { success = false, message = "Oturum bulunamadı!" });
+            }
+
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var blog = _db.BlogYazilaris.FirstOrDefault(b => b.BlogId == blogId);
+
+            if (blog == null)
+            {
+                return Json(new { success = false, message = "Blog bulunamadı!" });
+            }
+
+            // Durum = 2 (Reddedildi) yap, silme
+            blog.Durum = 2;
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Blog reddedildi!" });
+        }
 
     }
 }

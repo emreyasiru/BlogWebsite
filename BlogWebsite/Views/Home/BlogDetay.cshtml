@@ -14,7 +14,8 @@
          @foreach (var item in Model.BlogYazilarim){
             
             <div class="main_blog_details">		
-                <img class="img-fluid" src="@item.AnaGorsel" alt="">
+             <img class="img-fluid" src="@item.AnaGorsel" alt="@item.Baslik" 
+                style="width: 100%; height: 480px; object-fit: cover;">
                 <a href="#"><h4>@item.Baslik </h4></a>
                 <div class="user_details">
                   <div class="float-left">
