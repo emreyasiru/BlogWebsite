@@ -64,6 +64,39 @@ namespace BlogWebsite.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public IActionResult YorumYap(string isim, string email, string yorum, int blogId)
+        {
+            if (string.IsNullOrWhiteSpace(isim) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(yorum))
+            {
+                TempData["Hata"] = "Tüm alanlarý doldurun!";
+                return RedirectToAction("BlogDetay", "Home", new { blogid = blogId });
+            }
+
+            var blog = _db.BlogYazilaris.FirstOrDefault(b => b.BlogId == blogId);
+
+            if (blog == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var yorumekle = new Yorumlar
+            {
+                BlogId = blogId,
+                Ad = isim,
+                Email = email,
+                YorumIcerik = yorum,
+                Onaylandi = false,
+                OlusturmaTarihi = DateTime.Now
+            };
+
+            _db.Yorumlars.Add(yorumekle);
+            _db.SaveChanges();
+
+            TempData["YorumBasari"] = "Yorumunuz baþarýyla gönderildi! Onaylandýktan sonra yayýnlanacaktýr.";
+            return RedirectToAction("BlogDetay", "Home", new { blogid = blogId });
+        }
+
 
 
 

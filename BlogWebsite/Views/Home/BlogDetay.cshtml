@@ -91,25 +91,46 @@
                         
                 </div>
                 }
+                @if (TempData["YorumBasari"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>✓ Başarılı!</strong> @TempData["YorumBasari"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+
+                @if (TempData["Hata"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>✗ Hata!</strong> @TempData["Hata"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
                 
                 <div class="comment-form">
-                    <h4>Leave a Reply</h4>
-                    <form>
+                    <h4>Bir Yorum Bırak</h4>
+                    <form asp-action="YorumYap" asp-controller="Home" method="post">
+                        @foreach (var item in Model.BlogYazilarim)
+                        {
+                            <input type="hidden" name="blogId" value="@item.BlogId" />
+                        }
+
                         <div class="form-group form-inline">
                           <div class="form-group col-lg-6 col-md-6 name">
-                            <input type="text" class="form-control" id="name" placeholder="Enter Name" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter Name'">
+                            <input type="text" class="form-control" name="isim" id="isim" placeholder="İsim Girin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'İsim Girin'">
                           </div>
                           <div class="form-group col-lg-6 col-md-6 email">
-                            <input type="email" class="form-control" id="email" placeholder="Enter email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Enter email address'">
+                            <input type="email" class="form-control" name="email" id="email" placeholder="E-mail Adresi Girin" onfocus="this.placeholder = ''" onblur="this.placeholder = 'E-mail Adresi Girin'">
                           </div>										
-                        </div>
+                        </div>                      
                         <div class="form-group">
-                            <input type="text" class="form-control" id="subject" placeholder="Subject" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Subject'">
+                            <textarea class="form-control mb-10" name="yorum" rows="5" name="yorum" placeholder="Yorum" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Yorum'" required=""></textarea>
                         </div>
-                        <div class="form-group">
-                            <textarea class="form-control mb-10" rows="5" name="message" placeholder="Messege" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Messege'" required=""></textarea>
-                        </div>
-                        <a href="#" class="button submit_btn">Post Comment</a>	
+                        <button type="submit"  class="button submit_btn">Yorumu Yayınla</button>	
                     </form>
                 </div>
         </div>
