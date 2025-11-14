@@ -226,6 +226,9 @@
                     <li>
                         <a asp-action="BlogOnay" asp-controller="Admin"> <i class="menu-icon ti-email"></i>Blog Onay </a>
                     </li> 
+                     <li>
+                        <a asp-action="YorumOnay" asp-controller="Admin"> <i class="menu-icon ti-email"></i>Yorumlar </a>
+                    </li> 
                     <li>
                         <a href="widgets.html"> <i class="menu-icon ti-email"></i>İstatistikler </a>
                     </li> 
@@ -240,8 +243,8 @@
         <header id="header" class="header">
             <div class="top-left">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="./"><img src="~/AdminPanel/images/logo.png" alt="Logo"></a>
-                    <a class="navbar-brand hidden" href="./"><img src="~/AdminPanel/images/logo2.png" alt="Logo"></a>
+                    <a class="navbar-brand" asp-action="Index" asp-controller="Admin"><img src="~/AdminPanel/images/logo.png" alt="Logo"></a>
+                    <a class="navbar-brand hidden" asp-action="Index" asp-controller="Admin"><img src="~/AdminPanel/images/logo2.png" alt="Logo"></a>
                     <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
                 </div>
             </div>

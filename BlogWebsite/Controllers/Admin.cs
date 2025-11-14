@@ -320,6 +320,96 @@ namespace BlogWebsite.Controllers
 
             return Json(new { success = true, message = "Blog reddedildi!" });
         }
+        [HttpGet]
+        public IActionResult YorumOnay()
+        {
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+
+            if (kullaniciId == null)
+            {
+                return RedirectToAction("LoginPage", "Admin");
+            }
+
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return RedirectToAction("LoginPage", "Admin");
+            }
+
+            // Onay bekleyen yorumları getir (Onaylandı = false)
+            var onayBekleyenYorumlar = _db.Yorumlars
+                .Include(y => y.Blog)
+                .Where(y => y.Onaylandi == false)
+                .OrderByDescending(y => y.OlusturmaTarihi)
+                .ToList();
+
+            return View(onayBekleyenYorumlar);
+        }
+
+        // Yorum onaylama
+        [HttpPost]
+        public IActionResult YorumOnayla(int yorumId)
+        {
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+
+            if (kullaniciId == null)
+            {
+                return Json(new { success = false, message = "Oturum bulunamadı!" });
+            }
+
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var yorum = _db.Yorumlars.FirstOrDefault(y => y.YorumId == yorumId);
+
+            if (yorum == null)
+            {
+                return Json(new { success = false, message = "Yorum bulunamadı!" });
+            }
+
+            yorum.Onaylandi = true;
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Yorum onaylandı!" });
+        }
+
+        // Yorum reddetme
+        [HttpPost]
+        public IActionResult YorumReddet(int yorumId)
+        {
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+
+            if (kullaniciId == null)
+            {
+                return Json(new { success = false, message = "Oturum bulunamadı!" });
+            }
+
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var yorum = _db.Yorumlars.FirstOrDefault(y => y.YorumId == yorumId);
+
+            if (yorum == null)
+            {
+                return Json(new { success = false, message = "Yorum bulunamadı!" });
+            }
+
+            // Yorumu sil
+            _db.Yorumlars.Remove(yorum);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Yorum reddedildi ve silindi!" });
+        }
+
 
 
 
