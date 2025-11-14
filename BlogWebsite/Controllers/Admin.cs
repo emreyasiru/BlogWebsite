@@ -64,26 +64,116 @@ namespace BlogWebsite.Controllers
         [HttpGet]
         public IActionResult Kategoriler()
         {
-            var kategoriler = _db.Kategorilers.ToList();
             var userId = HttpContext.Session.GetInt32("KullaniciId");
             if (userId == null)
             {
                 return RedirectToAction("LoginPage");
             }
 
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+            if (kullanici == null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+
+            // Kullanıcı rolünü ViewBag ile gönder
+            ViewBag.KullaniciRol = kullanici.Rol;
+
+            var kategoriler = _db.Kategorilers.ToList();
             return View(kategoriler);
         }
+
         [HttpPost]
         public IActionResult KategoriEkle(string kategori_ekle)
         {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+
+            // Sadece Admin ekleyebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                TempData["Hata"] = "Yetkiniz yok!";
+                return RedirectToAction("Kategoriler");
+            }
+
+            if (string.IsNullOrWhiteSpace(kategori_ekle))
+            {
+                TempData["Hata"] = "Kategori adı boş olamaz!";
+                return RedirectToAction("Kategoriler");
+            }
+
             var ktgekle = new Kategoriler
             {
                 KategoriAdi = kategori_ekle
             };
-
             _db.Kategorilers.Add(ktgekle);
             _db.SaveChanges();
+
+            TempData["Basari"] = "Kategori başarıyla eklendi!";
             return RedirectToAction("Kategoriler");
+        }
+
+        [HttpPost]
+        public IActionResult KategoriGuncelle(int kategoriId, string kategoriAdi)
+        {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+
+            // Sadece Admin güncelleyebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            if (string.IsNullOrWhiteSpace(kategoriAdi))
+            {
+                return Json(new { success = false, message = "Kategori adı boş olamaz!" });
+            }
+
+            var kategori = _db.Kategorilers.FirstOrDefault(k => k.KategoriId == kategoriId);
+
+            if (kategori == null)
+            {
+                return Json(new { success = false, message = "Kategori bulunamadı!" });
+            }
+
+            kategori.KategoriAdi = kategoriAdi;
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Kategori güncellendi!" });
+        }
+
+        [HttpPost]
+        public IActionResult KategoriSil(int kategoriId)
+        {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+
+            // Sadece Admin silebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var kategori = _db.Kategorilers.FirstOrDefault(k => k.KategoriId == kategoriId);
+
+            if (kategori == null)
+            {
+                return Json(new { success = false, message = "Kategori bulunamadı!" });
+            }
+
+            // Kategoriye ait blog var mı kontrol et
+            var kategoriBlogSayisi = _db.BlogYazilaris.Count(b => b.KategoriId == kategoriId);
+
+            if (kategoriBlogSayisi > 0)
+            {
+                return Json(new { success = false, message = $"Bu kategoriye ait {kategoriBlogSayisi} blog var! Önce blogları silmelisiniz." });
+            }
+
+            _db.Kategorilers.Remove(kategori);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Kategori silindi!" });
         }
         [HttpGet]
         public IActionResult Etiketler()
