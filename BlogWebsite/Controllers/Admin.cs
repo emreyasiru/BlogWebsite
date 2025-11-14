@@ -178,27 +178,117 @@ namespace BlogWebsite.Controllers
         [HttpGet]
         public IActionResult Etiketler()
         {
-            var etiketler = _db.Etiketlers.ToList();
             var userId = HttpContext.Session.GetInt32("KullaniciId");
             if (userId == null)
             {
                 return RedirectToAction("LoginPage");
             }
 
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+            if (kullanici == null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+
+            // Kullanıcı rolünü ViewBag ile gönder
+            ViewBag.KullaniciRol = kullanici.Rol;
+
+            var etiketler = _db.Etiketlers.ToList();
             return View(etiketler);
         }
+
         [HttpPost]
         public IActionResult EtiketEkle(string Etiket_ekle)
         {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+
+            // Sadece Admin ekleyebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                TempData["Hata"] = "Yetkiniz yok!";
+                return RedirectToAction("Etiketler");
+            }
+
+            if (string.IsNullOrWhiteSpace(Etiket_ekle))
+            {
+                TempData["Hata"] = "Etiket adı boş olamaz!";
+                return RedirectToAction("Etiketler");
+            }
+
             var etkekle = new Etiketler
             {
                 EtiketAdi = Etiket_ekle,
-
+                KullanimSayisi = 0
             };
-
             _db.Etiketlers.Add(etkekle);
             _db.SaveChanges();
+
+            TempData["Basari"] = "Etiket başarıyla eklendi!";
             return RedirectToAction("Etiketler");
+        }
+
+        [HttpPost]
+        public IActionResult EtiketGuncelle(int etiketId, string etiketAdi)
+        {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+
+            // Sadece Admin güncelleyebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            if (string.IsNullOrWhiteSpace(etiketAdi))
+            {
+                return Json(new { success = false, message = "Etiket adı boş olamaz!" });
+            }
+
+            var etiket = _db.Etiketlers.FirstOrDefault(e => e.EtiketId == etiketId);
+
+            if (etiket == null)
+            {
+                return Json(new { success = false, message = "Etiket bulunamadı!" });
+            }
+
+            etiket.EtiketAdi = etiketAdi;
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Etiket güncellendi!" });
+        }
+
+        [HttpPost]
+        public IActionResult EtiketSil(int etiketId)
+        {
+            var userId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == userId);
+
+            // Sadece Admin silebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var etiket = _db.Etiketlers.FirstOrDefault(e => e.EtiketId == etiketId);
+
+            if (etiket == null)
+            {
+                return Json(new { success = false, message = "Etiket bulunamadı!" });
+            }
+
+            // Etikete ait blog var mı kontrol et
+            var etiketBlogSayisi = _db.BlogEtiketlers.Count(be => be.EtiketId == etiketId);
+
+            if (etiketBlogSayisi > 0)
+            {
+                return Json(new { success = false, message = $"Bu etiketi kullanan {etiketBlogSayisi} blog var! Önce bloglardan kaldırmalısınız." });
+            }
+
+            _db.Etiketlers.Remove(etiket);
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Etiket silindi!" });
         }
         [HttpGet]
         public IActionResult BlogEkle()

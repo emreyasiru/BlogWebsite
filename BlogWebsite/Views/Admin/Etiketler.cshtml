@@ -4,63 +4,251 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @model List<Etiketler>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary ml-4 mt-3 mb-2" data-toggle="modal" data-target="#exampleModal">
-    Etiket Ekle
-</button>
+<!-- Bildirim Mesajları -->
+@if (TempData["Basari"] != null)
+{
+        <div class="alert alert-success alert-dismissible fade show ml-4 mr-4 mt-3" role="alert">
+            <strong>✓ Başarılı!</strong> @TempData["Basari"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+}
 
-<!-- Modal -->
+@if (TempData["Hata"] != null)
+{
+        <div class="alert alert-danger alert-dismissible fade show ml-4 mr-4 mt-3" role="alert">
+            <strong>✗ Hata!</strong> @TempData["Hata"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+}
+
+<!-- Etiket Ekle Butonu - Sadece Admin görebilir -->
+@if (ViewBag.KullaniciRol == "Admin")
+{
+        <button type="button" class="btn btn-primary ml-4 mt-3 mb-2" data-toggle="modal" data-target="#exampleModal">
+            <i class="fa fa-plus"></i> Etiket Ekle
+        </button>
+}
+
+<!-- Etiket Ekle Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-
+                <h5 class="modal-title" id="exampleModalLabel">Yeni Etiket Ekle</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-             <form asp-action="EtiketEkle" asp-controller="Admin" method="post">
-            <div class="modal-body">              
+            <form asp-action="EtiketEkle" asp-controller="Admin" method="post">
+                <div class="modal-body">
                     <div class="form-group">
                         <label for="categoryName">Etiket Adı</label>
-                        <input type="text" name="Etiket_ekle" class="form-control" id="categoryName" placeholder="Etiket adını giriniz">
+                        <input type="text" name="Etiket_ekle" class="form-control" id="categoryName" placeholder="Etiket adını giriniz" required>
                     </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
-                <button type="submit" class="btn btn-primary">Kaydet</button>
-            </div>
-             </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-<div class="card">
-    
+
+<!-- Etiket Düzenle Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Etiket Düzenle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editEtiketId">
+                <div class="form-group">
+                    <label for="editEtiketAdi">Etiket Adı</label>
+                    <input type="text" class="form-control" id="editEtiketAdi" placeholder="Etiket adını giriniz" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-primary" id="btnGuncelle">Güncelle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card ml-4 mr-4">
     <div class="card-body">
-        <table class="table">
+        <table class="table table-hover">
             <thead class="thead-dark">
-                <tr>                                 
+                <tr>
                     <th scope="col">Id</th>
                     <th scope="col">Etiket Adı</th>
-                    <th scope="col">#</th>
+                    <th scope="col">Kullanım Sayısı</th>
+                    @if (ViewBag.KullaniciRol == "Admin")
+                    {
+                            <th scope="col" style="width: 150px;">İşlemler</th>
+                    }
                 </tr>
             </thead>
             <tbody>
                 @foreach (var etk in Model)
-                { 
-                 <tr>
-                    <th scope="row">@etk.EtiketId</th>
-                    <td>@etk.EtiketAdi</td>
-                    <td>@etk.KullanimSayisi</td>
-
-                </tr>
+                {
+                        <tr id="etiket-@etk.EtiketId">
+                            <th scope="row">@etk.EtiketId</th>
+                            <td class="etiket-adi">@etk.EtiketAdi</td>
+                            <td>@etk.KullanimSayisi</td>
+                        @if (ViewBag.KullaniciRol == "Admin")
+                        {
+                                    <td>
+                                        <button class="btn btn-warning btn-sm btn-duzenle" data-id="@etk.EtiketId" data-adi="@etk.EtiketAdi">
+                                            <i class="fa fa-edit"></i> Düzenle
+                                        </button>
+                                        <button class="btn btn-danger btn-sm btn-sil mt-2" data-id="@etk.EtiketId">
+                                            <i class="fa fa-trash"></i> Sil
+                                        </button>
+                                    </td>
+                        }
+                        </tr>
                 }
-
             </tbody>
         </table>
-
     </div>
- </div>
+</div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
 
+        // Modal referansı
+        var editModalElement = document.getElementById('editModal');
+
+        // Düzenle butonları için event listener
+        var duzenleButtons = document.querySelectorAll('.btn-duzenle');
+        duzenleButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var etiketId = this.getAttribute('data-id');
+                var etiketAdi = this.getAttribute('data-adi');
+
+                console.log('Düzenle tıklandı - ID:', etiketId, 'Ad:', etiketAdi);
+
+                document.getElementById('editEtiketId').value = etiketId;
+                document.getElementById('editEtiketAdi').value = etiketAdi;
+
+                // Modal aç (Pure JavaScript)
+                editModalElement.classList.add('show');
+                editModalElement.style.display = 'block';
+                document.body.classList.add('modal-open');
+
+                // Backdrop ekle
+                if (!document.getElementById('modal-backdrop-edit')) {
+                    var backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    backdrop.id = 'modal-backdrop-edit';
+                    document.body.appendChild(backdrop);
+                }
+            });
+        });
+
+        // Modal kapatma fonksiyonu
+        function closeEditModal() {
+            editModalElement.classList.remove('show');
+            editModalElement.style.display = 'none';
+            document.body.classList.remove('modal-open');
+
+            var backdrop = document.getElementById('modal-backdrop-edit');
+            if (backdrop) {
+                backdrop.remove();
+            }
+        }
+
+        // Kapatma butonları için
+        document.querySelectorAll('#editModal [data-dismiss="modal"]').forEach(function(btn) {
+            btn.addEventListener('click', closeEditModal);
+        });
+
+        // Güncelle butonu
+        var btnGuncelle = document.getElementById('btnGuncelle');
+        if (btnGuncelle) {
+            btnGuncelle.addEventListener('click', function() {
+                var etiketId = document.getElementById('editEtiketId').value;
+                var etiketAdi = document.getElementById('editEtiketAdi').value;
+
+                console.log('Güncelle tıklandı - ID:', etiketId, 'Ad:', etiketAdi);
+
+                if (!etiketAdi.trim()) {
+                    alert('Etiket adı boş olamaz!');
+                    return;
+                }
+
+                fetch('/Admin/EtiketGuncelle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'etiketId=' + etiketId + '&etiketAdi=' + encodeURIComponent(etiketAdi)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.success) {
+                        alert(data.message);
+
+                        // Tabloyu güncelle
+                        var row = document.getElementById('etiket-' + etiketId);
+                        if (row) {
+                            row.querySelector('.etiket-adi').textContent = etiketAdi;
+                            row.querySelector('.btn-duzenle').setAttribute('data-adi', etiketAdi);
+                        }
+
+                        // Modal'ı kapat
+                        closeEditModal();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata detayı:', error);
+                    alert('Güncelleme sırasında bir hata oluştu!');
+                });
+            });
+        }
+
+        // Sil butonları için event listener
+        var silButtons = document.querySelectorAll('.btn-sil');
+        silButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var etiketId = this.getAttribute('data-id');
+
+                if (confirm('Bu etiketi silmek istediğinize emin misiniz?')) {
+                    fetch('/Admin/EtiketSil', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'etiketId=' + etiketId
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            document.getElementById('etiket-' + etiketId).remove();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                        alert('Bir hata oluştu!');
+                    });
+                }
+            });
+        });
+    });
+</script>
