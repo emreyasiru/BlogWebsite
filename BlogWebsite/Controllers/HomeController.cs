@@ -54,6 +54,15 @@ namespace BlogWebsite.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
+            var blogum = _db.BlogYazilaris.FirstOrDefault(x => x.BlogId == blogid);
+
+            if (blogum == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            // Görüntülenme sayýsýný artýr
+            blogum.GoruntulemeSayisi++;
+            _db.SaveChanges();
             var bloglarým = _db.BlogYazilaris.FirstOrDefault(x => x.BlogId == blogid);
             var yorumlarým = _db.Yorumlars.Where(x => x.BlogId == blogid).ToList();
             var kategori = _db.Kategorilers.Where(x => x.KategoriId == bloglarým.KategoriId).FirstOrDefault();
@@ -63,6 +72,14 @@ namespace BlogWebsite.Controllers
                              select e).ToList();
             var kullanici = _db.Kullanicilars.Where(x => x.KullaniciId == bloglarým.YazarId).FirstOrDefault();
             ViewBag.YorumSayisi = yorumlarým.Count(x => x.Onaylandi == true);
+            // Kategorileri ve her kategorideki ONAYLANMIÞ blog sayýsýný getir
+            var tumKategoriler = _db.Kategorilers.ToList();
+            foreach (var kat in tumKategoriler)
+            {
+                kat.BlogYazilaris = _db.BlogYazilaris
+                    .Where(b => b.KategoriId == kat.KategoriId && b.Durum == 1)
+                    .ToList();
+            }
             var model = new AnasayfaBlogs();
             {
                 model.BlogYazilarim = new List<BlogYazilari> { bloglarým };
