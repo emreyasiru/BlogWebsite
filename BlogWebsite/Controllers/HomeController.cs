@@ -96,6 +96,10 @@ namespace BlogWebsite.Controllers
             TempData["YorumBasari"] = "Yorumunuz baþarýyla gönderildi! Onaylandýktan sonra yayýnlanacaktýr.";
             return RedirectToAction("BlogDetay", "Home", new { blogid = blogId });
         }
+        public IActionResult KategoriBloglari()
+        {
+            return View();
+        }
 
 
 
