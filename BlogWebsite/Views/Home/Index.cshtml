@@ -171,17 +171,25 @@
                   </div>
                   <button class="bbtns d-block mt-20 w-100">Subcribe</button>
                 </div>
-                <div class="single-sidebar-widget post-category-widget">
-                  <h4 class="single-sidebar-widget__title">Catgory</h4>
-                  <ul class="cat-list mt-20">
-                    <li>
-                      <a href="#" class="d-flex justify-content-between">
-                        <p>Technology</p>
-                        <p>(03)</p>
-                      </a>
-                    </li>                  
-                  </ul>
-                </div>
+               <div class="single-sidebar-widget post-category-widget">
+                <h4 class="single-sidebar-widget__title">Kategoriler</h4>
+                <ul class="cat-list mt-20">
+                    @foreach (var kategori in Model.Kategorilerim)
+                    {
+                        var blogSayisi = kategori.BlogYazilaris?.Count ?? 0;
+                        if (blogSayisi > 0) // Sadece blog içeren kategorileri göster
+                        {
+                <li>
+                  <a href="@Url.Action("KategoriBloglari", "Home", new { kategoriId = kategori.KategoriId })" 
+                     class="d-flex justify-content-between">
+                    <p>@kategori.KategoriAdi</p>
+                    <p>(@blogSayisi)</p>
+                  </a>
+                </li>
+                        }
+                    }
+              </ul>
+            </div>
 
                 <div class="single-sidebar-widget popular-post-widget">
                   <h4 class="single-sidebar-widget__title">Popular Post</h4>

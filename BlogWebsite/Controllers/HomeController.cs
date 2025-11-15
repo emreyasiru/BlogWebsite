@@ -2,6 +2,7 @@ using System.Diagnostics;
 using BlogWebsite.Modeller;
 using BlogWebsite.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogWebsite.Controllers
 {
@@ -18,9 +19,18 @@ namespace BlogWebsite.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            // Kategorileri ve her kategorideki blog sayýsýný getir
+            var kategoriler = _db.Kategorilers.ToList();
+            foreach (var kategori in kategoriler)
+            {
+                kategori.BlogYazilaris = _db.BlogYazilaris
+                    .Where(b => b.KategoriId == kategori.KategoriId && b.Durum == 1)
+                    .ToList();
+            }
+
             var blogs = new AnasayfaBlogs();
             {
-                blogs.BlogYazilarim = _db.BlogYazilaris.ToList();
+                blogs.BlogYazilarim = _db.BlogYazilaris.Where(b => b.Durum == 1).ToList(); // Sadece onaylý bloglar
                 blogs.Etiketlerim = _db.Etiketlers.ToList();
                 blogs.Kategorilerim = _db.Kategorilers.ToList();
                 blogs.Yorumlarim = _db.Yorumlars.ToList();
@@ -96,9 +106,58 @@ namespace BlogWebsite.Controllers
             TempData["YorumBasari"] = "Yorumunuz baþarýyla gönderildi! Onaylandýktan sonra yayýnlanacaktýr.";
             return RedirectToAction("BlogDetay", "Home", new { blogid = blogId });
         }
-        public IActionResult KategoriBloglari()
+        [HttpGet]
+        public IActionResult KategoriBloglari(int? kategoriId)
         {
-            return View();
+            if (kategoriId == null || kategoriId == 0)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Kategoriyi getir
+            var kategori = _db.Kategorilers.FirstOrDefault(k => k.KategoriId == kategoriId);
+
+            if (kategori == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Bu kategoriye ait onaylý bloglarý getir
+            var kategoriBloglar = _db.BlogYazilaris
+                .Include(b => b.Yazar)
+                .Include(b => b.Kategori)
+                .Where(b => b.KategoriId == kategoriId && b.Durum == 1)
+                .OrderByDescending(b => b.YayinTarihi)
+                .ToList();
+
+            var yorumlar = _db.Yorumlars.Where(y => y.Onaylandi == true).ToList();
+            var etiketler = _db.Etiketlers.ToList();
+            var blogetiketler = _db.BlogEtiketlers.ToList();
+            var kullanicilar = _db.Kullanicilars.ToList();
+
+            // Sidebar için tüm kategorileri ve blog sayýlarýný getir
+            var tumKategoriler = _db.Kategorilers.ToList();
+            foreach (var kat in tumKategoriler)
+            {
+                kat.BlogYazilaris = _db.BlogYazilaris
+                    .Where(b => b.KategoriId == kat.KategoriId && b.Durum == 1)
+                    .ToList();
+            }
+
+            var model = new AnasayfaBlogs
+            {
+                BlogYazilarim = kategoriBloglar,
+                Yorumlarim = yorumlar,
+                Etiketlerim = etiketler,
+                BlogEtiketlerim = blogetiketler,
+                Kullanicilarim = kullanicilar,
+                Kategorilerim = tumKategoriler
+            };
+
+            // Seçili kategori bilgisini ViewBag ile gönder
+            ViewBag.SecilikKategori = kategori;
+
+            return View(model);
         }
 
 
