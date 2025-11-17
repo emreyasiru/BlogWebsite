@@ -28,6 +28,15 @@ namespace BlogWebsite.Controllers
                     .ToList();
             }
 
+            // En çok görüntülenen 6 blogu slider için getir
+            var enCokGoruntulenenBloglar = _db.BlogYazilaris
+                .Include(b => b.Yazar)
+                .Include(b => b.Kategori)
+                .Where(b => b.Durum == 1)
+                .OrderByDescending(b => b.GoruntulemeSayisi)
+                .Take(6)
+                .ToList();
+
             var blogs = new AnasayfaBlogs();
             {
                 blogs.BlogYazilarim = _db.BlogYazilaris.Where(b => b.Durum == 1).ToList(); // Sadece onaylý bloglar
@@ -39,6 +48,7 @@ namespace BlogWebsite.Controllers
 
 
             }
+            ViewBag.SliderBloglar = enCokGoruntulenenBloglar;
             return View(blogs);
         }
 
@@ -160,6 +170,7 @@ namespace BlogWebsite.Controllers
                     .Where(b => b.KategoriId == kat.KategoriId && b.Durum == 1)
                     .ToList();
             }
+
 
             var model = new AnasayfaBlogs
             {

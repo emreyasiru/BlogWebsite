@@ -7,7 +7,13 @@
     .bosluk{
 		margin-top: 75px;
 
+
+
     }
+     .blog__slide__img img {
+        width: 100%;
+        height: 350px;
+        object-fit: cover;
    
     
 </style>
@@ -18,67 +24,89 @@
     <section class="bosluk">
       <div class="container">
         <div class="owl-carousel owl-theme blog-slider">
-          <div class="card blog__slide text-center">
-            <div class="blog__slide__img">
-              <img class="card-img rounded-0" src="~/AnaTemplate/img/blog/blog-slider/blog-slide1.png" alt="">
-            </div>
-            <div class="blog__slide__content">
-              <a class="blog__slide__label" href="#">Fashion</a>
-              <h3><a href="#">New york fashion week's continued the evolution</a></h3>
-              <p>2 days ago</p>
-            </div>
-          </div>
-          <div class="card blog__slide text-center">
-            <div class="blog__slide__img">
-              <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/blog-slider/blog-slide2.png" alt="">
-            </div>
-            <div class="blog__slide__content">
-              <a class="blog__slide__label" href="#">Fashion</a>
-              <h3><a href="#">New york fashion week's continued the evolution</a></h3>
-              <p>2 days ago</p>
-            </div>
-          </div>
-          <div class="card blog__slide text-center">
-            <div class="blog__slide__img">
-              <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/blog-slider/blog-slide3.png" alt="">
-            </div>
-            <div class="blog__slide__content">
-              <a class="blog__slide__label" href="#">Fashion</a>
-              <h3><a href="#">New york fashion week's continued the evolution</a></h3>
-              <p>2 days ago</p>
-            </div>
-          </div>
-          <div class="card blog__slide text-center">
-            <div class="blog__slide__img">
-              <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/blog-slider/blog-slide1.png" alt="">
-            </div>
-            <div class="blog__slide__content">
-              <a class="blog__slide__label" href="#">Fashion</a>
-              <h3><a href="#">New york fashion week's continued the evolution</a></h3>
-              <p>2 days ago</p>
-            </div>
-          </div>
-          <div class="card blog__slide text-center">
-            <div class="blog__slide__img">
-              <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/blog-slider/blog-slide2.png" alt="">
-            </div>
-            <div class="blog__slide__content">
-              <a class="blog__slide__label" href="#">Fashion</a>
-              <h3><a href="#">New york fashion week's continued the evolution</a></h3>
-              <p>2 days ago</p>
-            </div>
-          </div>
-          <div class="card blog__slide text-center">
-            <div class="blog__slide__img">
-              <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/blog-slider/blog-slide3.png" alt="">
-            </div>
-            <div class="blog__slide__content">
-              <a class="blog__slide__label" href="#">Fashion</a>
-              <h3><a href="#">New york fashion week's continued the evolution</a></h3>
-              <p>2 days ago</p>
-            </div>
-          </div>
+                @if (ViewBag.SliderBloglar != null && ViewBag.SliderBloglar.Count > 0)
+                {
+                    @foreach (var sliderBlog in ViewBag.SliderBloglar)
+                    {
+                                 <div class="card blog__slide text-center">
+                      <div class="blog__slide__img">
+                          <img class="card-img rounded-0" src="@sliderBlog.AnaGorsel" alt="@sliderBlog.Baslik">
+                      </div>
+                      <div class="blog__slide__content">
+                          <a class="blog__slide__label" asp-controller="Home" asp-action="KategoriBloglari" asp-route-kategoriId="@sliderBlog.KategoriId">
+                                    @sliderBlog.Kategori.KategoriAdi
+                          </a>
+                          <h3>
+                              <a asp-controller="Home" asp-action="BlogDetay" asp-route-blogid="@sliderBlog.BlogId">
+                                        @(sliderBlog.Baslik.Length > 60 ? sliderBlog.Baslik.Substring(0, 60) + "..." : sliderBlog.Baslik)
+                              </a>
+                          </h3>
+                          <p>
+                                    @{
+                                        // ✅ YayinTarihi nullable mı kontrol et
+                                        DateTime tarih;
+
+                                        // Eğer YayinTarihi nullable DateTime? ise
+                                        if (sliderBlog.YayinTarihi != null)
+                                        {
+                                            // DateTime? türünde ise .Value ile al
+                                            object yayinTarihiObj = sliderBlog.YayinTarihi;
+
+                                            if (yayinTarihiObj is DateTime?)
+                                            {
+                                                tarih = ((DateTime?)yayinTarihiObj).Value;
+                                            }
+                                            else
+                                            {
+                                                tarih = (DateTime)yayinTarihiObj;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            tarih = DateTime.Now;
+                                        }
+
+                                        var gunFarki = (DateTime.Now - tarih).Days;
+
+                                        if (gunFarki == 0)
+                                        {
+                                            <text>Bugün</text>
+                                        }
+                                        else if (gunFarki == 1)
+                                        {
+                                            <text>Dün</text>
+                                        }
+                                        else if (gunFarki < 7)
+                                        {
+                                            @gunFarki <text> gün önce</text>
+                                        }
+                                        else
+                                        {
+                                            @tarih.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                                        }
+                                    }
+                          </p>
+                      </div>
+                  </div>
+                    }
+                }
+                else
+                {
+                  <!-- Varsayılan placeholder -->
+                  <div class="card blog__slide text-center">
+                      <div class="blog__slide__img">
+                          <img class="card-img rounded-0" src="~/AnaTemplate/img/blog/blog-slider/blog-slide1.png" alt="">
+                      </div>
+                      <div class="blog__slide__content">
+                          <a class="blog__slide__label" href="#">Blog</a>
+                          <h3><a href="#">Henüz blog bulunmamaktadır</a></h3>
+                          <p>Yakında</p>
+                      </div>
+                  </div>
+                }
         </div>
+          </div>
+          
       </div>
     </section>
     <!--================ Blog slider end =================-->  
