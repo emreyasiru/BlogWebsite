@@ -178,6 +178,12 @@ namespace BlogWebsite.Controllers
         }
 
 
+        public IActionResult BizeUlasin()
+        {
+            return View();
+        }
+
+
 
 
 

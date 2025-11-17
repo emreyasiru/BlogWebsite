@@ -36,7 +36,7 @@
             <ul class="nav navbar-nav menu_nav justify-content-center">
               <li class="nav-item active"><a asp-controller="Home" asp-action="Index" class="nav-link">Anasayfa</a></li> 
               <li class="nav-item"><a class="nav-link" href="archive.html">Arşiv</a></li> 
-              <li class="nav-item"><a asp-action="BizeUlasin" asp-controller="Home" class="nav-link" >Kategoriler</a>
+              <li class="nav-item"><a class="nav-link" href="category.html">Kategoriler</a>
               <li class="nav-item submenu dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                   aria-expanded="false">Pages</a>
@@ -44,7 +44,7 @@
                   <li class="nav-item"><a class="nav-link" href="blog-details.html">Blog Details</a></li>
                 </ul>
               </li>
-              <li class="nav-item"><a class="nav-link" href="contact.html">Bize Ulaşın</a></li>
+              <li class="nav-item"><a asp-action="BizeUlasin" asp-controller="Home" class="nav-link">Bize Ulaşın</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right navbar-social">
               <li><a href="#"><i class="ti-facebook"></i></a></li>
