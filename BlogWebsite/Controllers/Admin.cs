@@ -45,16 +45,59 @@ namespace BlogWebsite.Controllers
             ViewBag.Hata = "Kullanıcı adı veya şifre yanlış.";
             return View();
         }
+        [HttpGet]
         public IActionResult Index()
         {
-            var userId = HttpContext.Session.GetInt32("KullaniciId");
-            if (userId == null)
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+
+            if (kullaniciId == null)
             {
                 return RedirectToAction("LoginPage");
             }
 
-            ViewBag.KullaniciAdi = HttpContext.Session.GetString("KullaniciAdi");
-            return View();
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return RedirectToAction("BlogEkle", "Admin");
+            }
+
+            // Durum = 1 olan (yayınlanmış) blogları getir
+            var yayinlanmisBloglar = _db.BlogYazilaris
+                .Include(b => b.Yazar)
+                .Include(b => b.Kategori)
+                .Where(b => b.Durum == 1)
+                .OrderByDescending(b => b.YayinTarihi)
+                .ToList();
+
+            return View(yayinlanmisBloglar);
+        }
+
+        // Blog pasifleştirme (Durum = 2 yap)
+        [HttpPost]
+        public IActionResult BlogPasiflestir(int blogId)
+        {
+            var kullaniciId = HttpContext.Session.GetInt32("KullaniciId");
+            var kullanici = _db.Kullanicilars.FirstOrDefault(k => k.KullaniciId == kullaniciId);
+
+            // Sadece Admin pasifleştirebilir
+            if (kullanici == null || kullanici.Rol != "Admin")
+            {
+                return Json(new { success = false, message = "Yetkiniz yok!" });
+            }
+
+            var blog = _db.BlogYazilaris.FirstOrDefault(b => b.BlogId == blogId);
+
+            if (blog == null)
+            {
+                return Json(new { success = false, message = "Blog bulunamadı!" });
+            }
+
+            // Durum = 2 (Pasif/Yayından kaldırıldı)
+            blog.Durum = 2;
+            _db.SaveChanges();
+
+            return Json(new { success = true, message = "Blog yayından kaldırıldı!" });
         }
         public IActionResult Logout()
         {
