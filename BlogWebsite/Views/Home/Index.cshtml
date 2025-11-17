@@ -12,7 +12,7 @@
     }
      .blog__slide__img img {
         width: 100%;
-        height: 350px;
+        height: 300px;
         object-fit: cover;
    
     
@@ -23,12 +23,13 @@
     <!--================ Blog slider start =================-->  
     <section class="bosluk">
       <div class="container">
+      <h4 class="single-sidebar-widget__title">En Popüler Bloglar</h4>
         <div class="owl-carousel owl-theme blog-slider">
                 @if (ViewBag.SliderBloglar != null && ViewBag.SliderBloglar.Count > 0)
                 {
                     @foreach (var sliderBlog in ViewBag.SliderBloglar)
                     {
-                                 <div class="card blog__slide text-center">
+                       <div class="card blog__slide text-center">
                       <div class="blog__slide__img">
                           <img class="card-img rounded-0" src="@sliderBlog.AnaGorsel" alt="@sliderBlog.Baslik">
                       </div>
@@ -42,49 +43,49 @@
                               </a>
                           </h3>
                           <p>
-                                    @{
-                                        // ✅ YayinTarihi nullable mı kontrol et
-                                        DateTime tarih;
+                            @{
+                                // ✅ YayinTarihi nullable mı kontrol et
+                                DateTime tarih;
 
-                                        // Eğer YayinTarihi nullable DateTime? ise
-                                        if (sliderBlog.YayinTarihi != null)
-                                        {
-                                            // DateTime? türünde ise .Value ile al
-                                            object yayinTarihiObj = sliderBlog.YayinTarihi;
+                                // Eğer YayinTarihi nullable DateTime? ise
+                                if (sliderBlog.YayinTarihi != null)
+                                {
+                                    // DateTime? türünde ise .Value ile al
+                                    object yayinTarihiObj = sliderBlog.YayinTarihi;
 
-                                            if (yayinTarihiObj is DateTime?)
-                                            {
-                                                tarih = ((DateTime?)yayinTarihiObj).Value;
-                                            }
-                                            else
-                                            {
-                                                tarih = (DateTime)yayinTarihiObj;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            tarih = DateTime.Now;
-                                        }
-
-                                        var gunFarki = (DateTime.Now - tarih).Days;
-
-                                        if (gunFarki == 0)
-                                        {
-                                            <text>Bugün</text>
-                                        }
-                                        else if (gunFarki == 1)
-                                        {
-                                            <text>Dün</text>
-                                        }
-                                        else if (gunFarki < 7)
-                                        {
-                                            @gunFarki <text> gün önce</text>
-                                        }
-                                        else
-                                        {
-                                            @tarih.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
-                                        }
+                                    if (yayinTarihiObj is DateTime?)
+                                    {
+                                        tarih = ((DateTime?)yayinTarihiObj).Value;
                                     }
+                                    else
+                                    {
+                                        tarih = (DateTime)yayinTarihiObj;
+                                    }
+                                }
+                                else
+                                {
+                                    tarih = DateTime.Now;
+                                }
+
+                                var gunFarki = (DateTime.Now - tarih).Days;
+
+                                if (gunFarki == 0)
+                                {
+                                    <text>Bugün</text>
+                                }
+                                else if (gunFarki == 1)
+                                {
+                                    <text>Dün</text>
+                                }
+                                else if (gunFarki < 7)
+                                {
+                                    @gunFarki <text> gün önce</text>
+                                }
+                                else
+                                {
+                                    @tarih.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR"))
+                                }
+                            }
                           </p>
                       </div>
                   </div>
@@ -219,55 +220,7 @@
               </ul>
             </div>
 
-                <div class="single-sidebar-widget popular-post-widget">
-                  <h4 class="single-sidebar-widget__title">Popular Post</h4>
-                  <div class="popular-post-list">
-                    <div class="single-post-list">
-                      <div class="thumb">
-                        <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/thumb/thumb1.png" alt="">
-                        <ul class="thumb-info">
-                          <li><a href="#">Adam Colinge</a></li>
-                          <li><a href="#">Dec 15</a></li>
-                        </ul>
-                      </div>
-                      <div class="details mt-20">
-                        <a href="blog-single.html">
-                          <h6>Accused of assaulting flight attendant miktake alaways</h6>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="single-post-list">
-                      <div class="thumb">
-                        <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/thumb/thumb2.png" alt="">
-                        <ul class="thumb-info">
-                          <li><a href="#">Adam Colinge</a></li>
-                          <li><a href="#">Dec 15</a></li>
-                        </ul>
-                      </div>
-                      <div class="details mt-20">
-                        <a href="blog-single.html">
-                          <h6>Tennessee outback steakhouse the
-                            worker diagnosed</h6>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="single-post-list">
-                      <div class="thumb">
-                        <img class="card-img rounded-0"  src="~/AnaTemplate/img/blog/thumb/thumb3.png" alt="">
-                        <ul class="thumb-info">
-                          <li><a href="#">Adam Colinge</a></li>
-                          <li><a href="#">Dec 15</a></li>
-                        </ul>
-                      </div>
-                      <div class="details mt-20">
-                        <a href="blog-single.html">
-                          <h6>Tennessee outback steakhouse the
-                            worker diagnosed</h6>
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                
 
                   <div class="single-sidebar-widget tag_cloud_widget">
                     <h4 class="single-sidebar-widget__title">Popular Post</h4>
