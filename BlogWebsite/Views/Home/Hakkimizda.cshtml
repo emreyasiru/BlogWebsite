@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewData["Title"] = "Hakkimizda";
+    Layout = "~/Views/Shared/_Home.cshtml";
+}
+
+<style>
+    .bosluk {
+        margin-top: 75px;
+    }
+
+    .about-section {
+        padding: 60px 0;
+    }
+
+    .section-title {
+        margin-bottom: 40px;
+    }
+
+    .section-title h2 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+    .section-title p {
+        font-size: 16px;
+        color: #7f8c8d;
+    }
+
+    .about-content {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #34495e;
+    }
+
+    .about-content p {
+        margin-bottom: 20px;
+    }
+
+    .mission-card {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .mission-card:hover {
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+    }
+
+    .mission-card i {
+        font-size: 48px;
+        color: #3498db;
+        margin-bottom: 20px;
+    }
+
+    .mission-card h4 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+
+    .team-member {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+        object-fit: cover;
+    }
+
+    .team-member h5 {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .team-member p {
+        color: #7f8c8d;
+        margin-bottom: 10px;
+    }
+
+    .stats-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 60px 0;
+        color: white;
+        margin: 60px 0;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-item h3 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .stat-item p {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+</style>
+
+<!--================ Start About Area =================-->
+<section class="about-section bosluk">
+    <div class="container">
+
+        <!-- Ana Başlık -->
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title text-center">
+                    <h2>Hakkımızda</h2>
+                    <p>Lezzetin ve keşfin paylaşmanın gücüne inanan bir topluluk</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hikayemiz -->
+        <div class="row mb-5">
+            <div class="col-lg-6">
+                <img src="~/AnaTemplate/img/TravelFood.jpg" alt="Hakkımızda" class="img-fluid rounded" 
+                     style="width: 100%; height: 400px; object-fit: cover;">
+            </div>
+            <div class="col-lg-6">
+                <div class="about-content">
+                    <h3 class="mb-4">Hikayemiz</h3>
+                    <p>
+                        2024 yılında kurulan platformumuz, sadece bilgiyi değil, aynı zamanda deneyimleri ve lezzetleri de paylaşmanın önemini vurgulayan bir vizyonla yola çıktı. Amacımız, okuyucularımıza şehrin gizli kalmış mekanlarını, en popüler restoranlarını ve unutulmaz gezi rotalarını güncel, samimi ve detaylı değerlendirmelerle sunmaktır.
+                    </p>
+                    <p>
+                        Sokak lezzetlerinden lüks gastronomi deneyimlerine, yerli bir tatil köyünden uzak diyarlardaki maceralara kadar geniş bir yelpazede gezi ve yemek içerikleri üretiyoruz. Yazar ve gezginlerimiz, damak zevkine güvenen, yeni yerler keşfetmeye tutkulu ve okuyucularıyla en gerçek deneyimleri paylaşmayı seven kişilerden oluşmaktadır.
+                    </p>
+                    <p>
+                        Her gün binlerce okurla buluşan platformumuz, Türkiye'nin en güvenilir gezi ve yemek rehberi olmayı hedeflemektedir. Sizleri bu lezzet dolu yolculuğa davet ediyoruz!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Misyon & Vizyon -->
+        <div class="row mb-5">
+            <div class="col-lg-4">
+                <div class="mission-card text-center">
+                    <i class="ti-target"></i>
+                    <h4>Misyonumuz</h4>
+                    <p>
+                        Okuyucularımıza şehirlerini ve dünyayı daha iyi keşfetmeleri için ilham vermek; restoran, kafe ve gezi noktaları hakkında tarafsız, kaliteli ve pratik bilgiler sunarak onların en doğru tercihi yapmalarına yardımcı olmaktır.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mission-card text-center">
+                    <i class="ti-eye"></i>
+                    <h4>Vizyonumuz</h4>
+                    <p> Türkiye'deki gezi ve yemek kültürünün en önemli dijital kaynağı olarak, herkesin güvendiği, her seyahat öncesi ilk baktığı platform haline gelmek</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="mission-card text-center">
+                    <i class="ti-heart"></i>
+                    <h4>Değerlerimiz</h4>
+                    <p>
+                        Tarafsızlık ve Dürüstlük: Tüm değerlendirmelerimiz bağımsız ve gerçek deneyimlere dayanır.
+
+                        Kalite: Hem içeriklerimizin hem de önerdiğimiz mekanların kalitesine önem veririz.
+
+                        Yenilikçilik: Sürekli yeni mekanları, rotaları ve trendleri takip ederek okuyucularımıza taze içerikler sunarız.
+
+                        Okuyucu Memnuniyeti: Kullanıcı deneyimini ve geri bildirimlerini merkeze alan bir anlayışla hareket ederiz.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+

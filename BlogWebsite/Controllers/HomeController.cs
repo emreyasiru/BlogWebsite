@@ -188,8 +188,14 @@ namespace BlogWebsite.Controllers
             return View(model);
         }
 
-
+        [HttpGet]
         public IActionResult BizeUlasin()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Hakkimizda()
         {
             return View();
         }
