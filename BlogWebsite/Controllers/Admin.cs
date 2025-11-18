@@ -633,7 +633,11 @@ namespace BlogWebsite.Controllers
             return Json(new { success = true, message = "Yorum reddedildi ve silindi!" });
         }
 
-
+        [HttpGet]
+        public IActionResult Raporlar()
+        {
+            return View();
+        }
 
 
     }
